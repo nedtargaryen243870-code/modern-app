@@ -30,9 +30,9 @@
   - [x] Implement `src/proxy.ts` attaching `x-trace-id` header and measuring latency
   - [x] Asynchronously dispatch `http.request` telemetry on responses
   - [x] Confirm tests pass (Green phase)
-- [ ] Task: TDD - Tests for Next.js 16 Instrumentation server error capture
-  - [ ] Write unit tests for `src/instrumentation.ts` verifying `onRequestError` captures server exceptions
-  - [ ] Confirm tests fail (Red phase)
+- [x] Task: TDD - Tests for Next.js 16 Instrumentation server error capture [12268cf]
+  - [x] Write unit tests for `src/instrumentation.ts` verifying `onRequestError` captures server exceptions
+  - [x] Confirm tests fail (Red phase)
 - [ ] Task: Implement Next.js 16 Instrumentation error reporting
   - [ ] Implement `src/instrumentation.ts` with `register()` and `onRequestError()` hooks
   - [ ] Forward uncaught server errors and digests to `logError`
