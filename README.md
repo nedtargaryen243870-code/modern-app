@@ -111,3 +111,27 @@ npx vitest run tests/api/articles.test.ts
 - **Data Layer**: MongoDB Native Driver (`mongodb` v7.x), Zod 4
 - **Auth**: NextAuth.js v5 beta (`next-auth`), bcrypt
 - **Testing**: Vitest 5, Testing Library, node-mocks-http
+- **Telemetry & Observability**: Google Cloud Pub/Sub, BigQuery, Next.js 16 Proxy tracing (`x-trace-id`)
+
+---
+
+## Telemetry & Cloud Observability
+
+The modern application integrates a serverless event streaming pipeline utilizing Google Cloud Pub/Sub and Google Cloud BigQuery, replacing the legacy Morgan and Winston file-based loggers.
+
+### Environment Variables for Telemetry
+
+Configure the following variables in `.env.local` or your production deployment environment:
+
+```env
+# Google Cloud Pub/Sub Configuration
+PUBSUB_PROJECT_ID="your-gcp-project-id"
+PUBSUB_TOPIC_NAME="telemetry-events"
+
+# Optional: Enable stdout fallback logging in addition to Pub/Sub
+TELEMETRY_LOG_TO_CONSOLE="false"
+```
+
+> If `PUBSUB_PROJECT_ID` or `PUBSUB_TOPIC_NAME` is not set, the telemetry system gracefully falls back to structured JSON logging via `stdout`, allowing tests and local development to function without GCP infrastructure.
+
+For detailed BigQuery DDL schemas, Pub/Sub direct subscription deployment scripts, and analytical SQL queries, see [`docs/telemetry/bigquery-pubsub-setup.md`](file:///home/tianzi/ned/ExpressModernization2/modern-app/docs/telemetry/bigquery-pubsub-setup.md).
