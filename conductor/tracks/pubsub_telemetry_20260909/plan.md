@@ -3,8 +3,8 @@
 ## Phase 1: Telemetry Core SDK & Publisher Service
 - [x] Task: Document architecture update in tech stack [11e023b]
   - [x] Add `@google-cloud/pubsub` and BigQuery subscription details to `conductor/tech-stack.md`
-- [ ] Task: Install required dependencies
-  - [ ] Install `@google-cloud/pubsub`, `uuid`, and `@types/uuid`
+- [x] Task: Install required dependencies [d43e6ee]
+  - [x] Install `@google-cloud/pubsub`, `uuid`, and `@types/uuid`
 - [ ] Task: TDD - Unit tests for telemetry schemas and envelope validation
   - [ ] Write unit tests verifying schema definitions, Zod validation, and envelope structure
   - [ ] Confirm tests fail (Red phase)
