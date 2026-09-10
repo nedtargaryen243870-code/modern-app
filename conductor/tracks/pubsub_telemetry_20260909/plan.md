@@ -33,10 +33,10 @@
 - [x] Task: TDD - Tests for Next.js 16 Instrumentation server error capture [12268cf]
   - [x] Write unit tests for `src/instrumentation.ts` verifying `onRequestError` captures server exceptions
   - [x] Confirm tests fail (Red phase)
-- [ ] Task: Implement Next.js 16 Instrumentation error reporting
-  - [ ] Implement `src/instrumentation.ts` with `register()` and `onRequestError()` hooks
-  - [ ] Forward uncaught server errors and digests to `logError`
-  - [ ] Confirm tests pass (Green phase)
+- [x] Task: Implement Next.js 16 Instrumentation error reporting [92ac0f8]
+  - [x] Implement `src/instrumentation.ts` with `register()` and `onRequestError()` hooks
+  - [x] Forward uncaught server errors and digests to `logError`
+  - [x] Confirm tests pass (Green phase)
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 3: Domain Audit Event Instrumentation
