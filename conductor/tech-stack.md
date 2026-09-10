@@ -34,3 +34,11 @@
 - **Package Manager:** npm
 - **Bundler / Compiler:** Next.js Turbopack / PostCSS
 - **Development Server:** `next dev -H 0.0.0.0 -p 3001`
+
+## Telemetry, Logging & Observability
+- **Event Pipeline:** Google Cloud Pub/Sub (`@google-cloud/pubsub`) replacing legacy Winston & Morgan
+- **Sink / Warehouse:** Google Cloud BigQuery (via Pub/Sub direct BigQuery subscription)
+- **Tracing & Correlation:** Request-bound correlation trace IDs (`x-trace-id`) via Next.js 16 Proxy
+- **Error Capture:** Next.js 16 Instrumentation hooks (`onRequestError`)
+- **Fallback / Local Mode:** Structured JSON stdout logger for offline/local development without GCP credentials
+
