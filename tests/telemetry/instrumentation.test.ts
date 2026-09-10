@@ -19,6 +19,18 @@ describe('Next.js 16 Instrumentation Error Reporting', () => {
       expect(processOnSpy).toHaveBeenCalledWith('SIGTERM', expect.any(Function));
       expect(processOnSpy).toHaveBeenCalledWith('SIGINT', expect.any(Function));
     });
+
+    it('executes signal shutdown handlers when triggered', async () => {
+      let sigtermHandler: any;
+      vi.spyOn(process, 'on').mockImplementation((event: string, handler: any) => {
+        if (event === 'SIGTERM') sigtermHandler = handler;
+        return process;
+      });
+      await register();
+      expect(sigtermHandler).toBeDefined();
+      await sigtermHandler('SIGTERM');
+      expect(flushTelemetrySpy).toHaveBeenCalled();
+    });
   });
 
   describe('onRequestError()', () => {
