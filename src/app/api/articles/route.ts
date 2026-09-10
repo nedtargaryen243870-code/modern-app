@@ -3,6 +3,7 @@ import { ArticleInputSchema } from "@/lib/models/schema";
 import { listArticles, normalizeTags, parseObjectId } from "@/lib/models/utils";
 import { getSessionUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/mongodb";
+import { trackAudit } from "@/lib/telemetry";
 
 export async function GET(req: NextRequest) {
   try {
@@ -85,6 +86,22 @@ export async function POST(req: NextRequest) {
     };
 
     const result = await db.collection("articles").insertOne(newArticle);
+    const traceId = req.headers.get("x-trace-id") || undefined;
+
+    await trackAudit(
+      {
+        action: "create",
+        resourceType: "article",
+        resourceId: result.insertedId.toString(),
+        userId: session.userId,
+        status: "success",
+        details: {
+          title,
+          tags: newArticle.tags,
+        },
+      },
+      { traceId }
+    );
 
     return NextResponse.json(
       {
