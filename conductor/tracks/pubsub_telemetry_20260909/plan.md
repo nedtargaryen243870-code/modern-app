@@ -52,7 +52,7 @@
 - [x] Task: Instrument Comment API endpoints with audit events [cbd2b83]
   - [x] Emit `audit.comment` on create (`POST /api/articles/[id]/comments`) and delete (`DELETE /api/articles/[id]/comments/[commentId]`)
   - [x] Confirm tests pass (Green phase)
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md) [cbd2b83]
 
 ## Phase 4: BigQuery Schema, Documentation & End-to-End Verification
 - [ ] Task: Create BigQuery DDL schema & Pub/Sub subscription deployment guide
