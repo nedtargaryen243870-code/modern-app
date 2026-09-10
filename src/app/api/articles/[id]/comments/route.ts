@@ -4,6 +4,7 @@ import { parseObjectId } from "@/lib/models/utils";
 import { CommentInputSchema } from "@/lib/models/schema";
 import { getDb } from "@/lib/db/mongodb";
 import { ObjectId } from "mongodb";
+import { trackAudit } from "@/lib/telemetry";
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -61,6 +62,21 @@ export async function POST(req: NextRequest, { params }: RouteContext) {
     await db.collection("articles").updateOne(
       { _id: articleObjectId },
       { $push: { comments: newComment } as any }
+    );
+
+    const traceId = req.headers.get("x-trace-id") || undefined;
+    await trackAudit(
+      {
+        action: "create",
+        resourceType: "comment",
+        resourceId: newComment._id.toString(),
+        userId: session.userId,
+        status: "success",
+        details: {
+          articleId: id,
+        },
+      },
+      { traceId }
     );
 
     return NextResponse.json(
