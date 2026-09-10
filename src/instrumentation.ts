@@ -26,13 +26,13 @@ export const onRequestError: Instrumentation.onRequestError = async (
     err instanceof Error
       ? err.message
       : typeof err === 'object' && err !== null && 'message' in err
-      ? String((err as any).message)
+      ? String((err as Record<string, unknown>).message)
       : String(err);
   const stack = err instanceof Error ? err.stack : undefined;
   const name = err instanceof Error ? err.name : 'ServerError';
   const digest =
     typeof err === 'object' && err !== null && 'digest' in err
-      ? String((err as any).digest)
+      ? String((err as Record<string, unknown>).digest)
       : undefined;
 
   // Extract trace ID from request headers or fallback to generated ID
