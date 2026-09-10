@@ -26,10 +26,10 @@
 - [x] Task: TDD - Tests for Next.js 16 Proxy HTTP telemetry [a72c305]
   - [x] Write unit tests for `proxy.ts` verifying trace ID generation and `http.request` event emission
   - [x] Confirm tests fail (Red phase)
-- [ ] Task: Implement Next.js 16 Proxy telemetry interceptor
-  - [ ] Implement `src/proxy.ts` attaching `x-trace-id` header and measuring latency
-  - [ ] Asynchronously dispatch `http.request` telemetry on responses
-  - [ ] Confirm tests pass (Green phase)
+- [x] Task: Implement Next.js 16 Proxy telemetry interceptor [181c8e6]
+  - [x] Implement `src/proxy.ts` attaching `x-trace-id` header and measuring latency
+  - [x] Asynchronously dispatch `http.request` telemetry on responses
+  - [x] Confirm tests pass (Green phase)
 - [ ] Task: TDD - Tests for Next.js 16 Instrumentation server error capture
   - [ ] Write unit tests for `src/instrumentation.ts` verifying `onRequestError` captures server exceptions
   - [ ] Confirm tests fail (Red phase)
