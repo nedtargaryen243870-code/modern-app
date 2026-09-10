@@ -55,8 +55,8 @@
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md) [cbd2b83]
 
 ## Phase 4: BigQuery Schema, Documentation & End-to-End Verification
-- [ ] Task: Create BigQuery DDL schema & Pub/Sub subscription deployment guide
-  - [ ] Create `docs/telemetry/bigquery-pubsub-setup.md` with table DDL, schema definition, and `gcloud` subscription commands
+- [x] Task: Create BigQuery DDL schema & Pub/Sub subscription deployment guide [54e8eef]
+  - [x] Create `docs/telemetry/bigquery-pubsub-setup.md` with table DDL, schema definition, and `gcloud` subscription commands
 - [ ] Task: Execute full automated test suite and regression harness
   - [ ] Run `npm run test` (including parity-adversarial tests) to ensure zero regressions
   - [ ] Verify test coverage >80% on all new telemetry modules
