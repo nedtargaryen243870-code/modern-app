@@ -85,7 +85,21 @@ describe('Telemetry Publisher & Facade', () => {
       const messageId = await publisher.publish(envelope);
       expect(messageId).toBe('msg-12345');
       expect(mockPublishMessage).toHaveBeenCalledWith({
-        json: envelope,
+        json: {
+          event_id: envelope.eventId,
+          timestamp: envelope.timestamp,
+          event_type: envelope.eventType,
+          severity: envelope.severity,
+          service: envelope.service,
+          environment: envelope.environment,
+          trace_id: envelope.traceId,
+          user_id: null,
+          data: JSON.stringify(envelope.data),
+          eventId: envelope.eventId,
+          eventType: envelope.eventType,
+          traceId: envelope.traceId,
+          userId: undefined,
+        },
         attributes: {
           eventType: 'http.request',
           severity: 'INFO',

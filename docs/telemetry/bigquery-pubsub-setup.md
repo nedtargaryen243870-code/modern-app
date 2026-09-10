@@ -114,13 +114,14 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
 ### 3.3 Create Direct BigQuery Subscription
 
 ```bash
-# 1. Create BigQuery subscription with metadata and dead-letter handling
+# 1. Create BigQuery subscription with metadata, dead-letter handling, and drop-unknown-fields
 gcloud pubsub subscriptions create telemetry-events-bq-sub \
   --project="YOUR_PROJECT_ID" \
   --topic="telemetry-events" \
   --bigquery-table="YOUR_PROJECT_ID.telemetry.app_events" \
   --use-table-schema \
   --write-metadata \
+  --drop-unknown-fields \
   --dead-letter-topic="telemetry-events-dlq" \
   --max-delivery-attempts=5
 
@@ -131,6 +132,34 @@ gcloud pubsub subscriptions create telemetry-events-dlq-bq-sub \
   --bigquery-table="YOUR_PROJECT_ID.telemetry.app_events_dlq" \
   --write-metadata
 ```
+
+#### Updating an Existing Subscription
+If the subscription already exists without `--drop-unknown-fields`, update it:
+```bash
+gcloud pubsub subscriptions update telemetry-events-bq-sub \
+  --project="YOUR_PROJECT_ID" \
+  --bigquery-table="YOUR_PROJECT_ID:telemetry.app_events" \
+  --use-table-schema \
+  --write-metadata \
+  --drop-unknown-fields
+```
+
+### 3.4 BigQuery JSON Data Type Ingestion & Schema Rules
+
+When streaming messages directly into BigQuery using `--use-table-schema`, Pub/Sub maps JSON message fields directly to corresponding BigQuery columns. Keep in mind the following Google Cloud requirements:
+
+1. **JSON Column Stringification**:
+   - When a BigQuery column has the `JSON` data type (e.g., the `data` column), Pub/Sub's direct ingestion driver requires the field value to be a **valid JSON-encoded string** (e.g. `"data": "{\"method\":\"POST\",\"path\":\"/...\"}"`), NOT an unescaped raw JSON object.
+   - If an unescaped JSON object is passed, Pub/Sub fails with:
+     `JSON Object: 'data' is incompatible with BigQuery field: 'data' of type: 'JSON'. To write data to a JSON field it must be a valid JSON string.`
+   - In `TelemetryPublisher`, the application automatically serializes `envelope.data` to a valid JSON string before publishing, allowing BigQuery to parse and store it as native BigQuery JSON.
+2. **Column Casing and `--drop-unknown-fields`**:
+   - The BigQuery table schema uses standard SQL `snake_case` (`event_id`, `event_type`, `trace_id`, `user_id`).
+   - If `--drop-unknown-fields` is omitted, any field in the message payload not present in the BigQuery table schema (such as `camelCase` properties) will cause ingestion failure: `JSON Field: 'eventId' not found in table schema`.
+   - `TelemetryPublisher` provides standard `snake_case` column keys to map directly into BigQuery, while `--drop-unknown-fields` ensures that any auxiliary or client metadata won't trigger dead-letter retries.
+3. **Table Schema vs Topic Schema**:
+   - Pub/Sub supports either `--use-table-schema` (directly referencing BigQuery) or `--use-topic-schema` (requiring an Apache Avro or Protocol Buffers schema attached to the topic).
+   - `--use-table-schema` is the recommended pattern because it provides native type inference directly from BigQuery without maintaining external Avro/Protobuf schemas. In Avro, `data` would also be defined as `"type": "string"`, requiring the exact same JSON-string encapsulation.
 
 ---
 
