@@ -6,9 +6,8 @@ import {
   EventSeverity,
   createTelemetryEnvelope,
   CreateTelemetryEnvelopeParams,
-  TelemetryEnvelope,
 } from './schema';
-import { getPublisher, TelemetryPublisher } from './publisher';
+import { getPublisher } from './publisher';
 
 export * from './schema';
 export * from './config';
