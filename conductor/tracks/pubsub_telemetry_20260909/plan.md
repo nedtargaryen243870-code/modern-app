@@ -40,9 +40,9 @@
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md) [92ac0f8]
 
 ## Phase 3: Domain Audit Event Instrumentation
-- [ ] Task: TDD - Tests for domain audit logging across API routes
-  - [ ] Write tests verifying audit event emission on user registration, article lifecycle, and comments
-  - [ ] Confirm tests fail (Red phase)
+- [x] Task: TDD - Tests for domain audit logging across API routes [45509b0]
+  - [x] Write tests verifying audit event emission on user registration, article lifecycle, and comments
+  - [x] Confirm tests fail (Red phase)
 - [ ] Task: Instrument User API endpoints with audit events
   - [ ] Emit `audit.auth` on registration (`/api/users`) and session validation (`/api/users/session`)
   - [ ] Confirm tests pass (Green phase)
