@@ -16,10 +16,10 @@
   - [x] Write unit tests for `src/lib/telemetry/publisher.ts` mocking `@google-cloud/pubsub`
   - [x] Test batching, error recovery, and stdout fallback when credentials are absent
   - [x] Confirm tests fail (Red phase)
-- [ ] Task: Implement Pub/Sub publisher client and local fallback
-  - [ ] Implement singleton publisher in `src/lib/telemetry/publisher.ts` with batching configuration
-  - [ ] Implement convenience facade `src/lib/telemetry/index.ts` (`logHttp`, `logError`, `trackAudit`)
-  - [ ] Confirm tests pass (Green phase)
+- [x] Task: Implement Pub/Sub publisher client and local fallback [237fcf6]
+  - [x] Implement singleton publisher in `src/lib/telemetry/publisher.ts` with batching configuration
+  - [x] Implement convenience facade `src/lib/telemetry/index.ts` (`logHttp`, `logError`, `trackAudit`)
+  - [x] Confirm tests pass (Green phase)
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 2: HTTP Tracing & Error Telemetry Integration (Morgan & Winston Replacement)
