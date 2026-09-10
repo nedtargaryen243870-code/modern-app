@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { TelemetryPublisher, getPublisher } from '@/lib/telemetry/publisher';
-import { logHttp, logError, trackAudit, flushTelemetry } from '@/lib/telemetry/index';
+import { logHttp, logError, trackAudit, trackEvent, flushTelemetry } from '@/lib/telemetry/index';
 
 // Mock @google-cloud/pubsub
 const mockPublishMessage = vi.fn().mockResolvedValue('msg-12345');
@@ -14,10 +14,10 @@ const mockCloseClient = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('@google-cloud/pubsub', () => {
   return {
-    PubSub: vi.fn().mockImplementation(() => ({
-      topic: mockTopic,
-      close: mockCloseClient,
-    })),
+    PubSub: class {
+      topic = mockTopic;
+      close = mockCloseClient;
+    },
   };
 });
 
@@ -179,8 +179,38 @@ describe('Telemetry Publisher & Facade', () => {
       expect(msgId).toBeDefined();
     });
 
+    it('trackEvent publishes generic telemetry envelope', async () => {
+      const msgId = await trackEvent({
+        eventType: 'audit.auth',
+        severity: 'INFO',
+        traceId: 'tr-gen-1',
+        data: { action: 'user.login' },
+      });
+      expect(msgId).toBeDefined();
+    });
+
+    it('logHttp calculates WARN and ERROR severity according to status code', async () => {
+      await logHttp({ method: 'GET', path: '/404', statusCode: 404, durationMs: 1 });
+      await logHttp({ method: 'POST', path: '/500', statusCode: 500, durationMs: 2 });
+      expect(consoleSpy).toHaveBeenCalled();
+    });
+
+    it('publisher.close closes pubsub client cleanly', async () => {
+      const publisher = new TelemetryPublisher({
+        projectId: 'test-project',
+        topicName: 'test-topic',
+        logToConsole: false,
+        service: 'modern-app',
+        environment: 'production',
+      });
+      expect(publisher.isConfigured()).toBe(true);
+      await publisher.close();
+      expect(mockCloseClient).toHaveBeenCalled();
+    });
+
     it('flushTelemetry successfully executes without error', async () => {
       await expect(flushTelemetry()).resolves.not.toThrow();
     });
   });
 });
+
