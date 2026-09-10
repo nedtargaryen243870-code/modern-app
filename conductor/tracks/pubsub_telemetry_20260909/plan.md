@@ -8,10 +8,10 @@
 - [x] Task: TDD - Unit tests for telemetry schemas and envelope validation [937234e]
   - [x] Write unit tests verifying schema definitions, Zod validation, and envelope structure
   - [x] Confirm tests fail (Red phase)
-- [ ] Task: Implement telemetry schema, Zod validators, and config
-  - [ ] Implement `src/lib/telemetry/schema.ts` with CloudEvents-style envelope and event types
-  - [ ] Implement `src/lib/telemetry/config.ts` reading environment variables with safe defaults
-  - [ ] Confirm tests pass (Green phase)
+- [x] Task: Implement telemetry schema, Zod validators, and config [5eac284]
+  - [x] Implement `src/lib/telemetry/schema.ts` with CloudEvents-style envelope and event types
+  - [x] Implement `src/lib/telemetry/config.ts` reading environment variables with safe defaults
+  - [x] Confirm tests pass (Green phase)
 - [ ] Task: TDD - Unit tests for Pub/Sub publisher and fallback logging
   - [ ] Write unit tests for `src/lib/telemetry/publisher.ts` mocking `@google-cloud/pubsub`
   - [ ] Test batching, error recovery, and stdout fallback when credentials are absent
