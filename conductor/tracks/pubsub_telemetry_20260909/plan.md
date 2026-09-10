@@ -5,9 +5,9 @@
   - [x] Add `@google-cloud/pubsub` and BigQuery subscription details to `conductor/tech-stack.md`
 - [x] Task: Install required dependencies [d43e6ee]
   - [x] Install `@google-cloud/pubsub`, `uuid`, and `@types/uuid`
-- [ ] Task: TDD - Unit tests for telemetry schemas and envelope validation
-  - [ ] Write unit tests verifying schema definitions, Zod validation, and envelope structure
-  - [ ] Confirm tests fail (Red phase)
+- [x] Task: TDD - Unit tests for telemetry schemas and envelope validation [937234e]
+  - [x] Write unit tests verifying schema definitions, Zod validation, and envelope structure
+  - [x] Confirm tests fail (Red phase)
 - [ ] Task: Implement telemetry schema, Zod validators, and config
   - [ ] Implement `src/lib/telemetry/schema.ts` with CloudEvents-style envelope and event types
   - [ ] Implement `src/lib/telemetry/config.ts` reading environment variables with safe defaults
