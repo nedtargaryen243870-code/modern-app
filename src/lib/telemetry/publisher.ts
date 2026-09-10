@@ -47,8 +47,35 @@ export class TelemetryPublisher {
     }
 
     try {
+      // BigQuery direct subscriptions with JSON columns require the payload
+      // for the JSON field to be a valid JSON-encoded string, and table columns
+      // use snake_case identifiers.
+      const serializedData =
+        typeof envelope.data === 'string'
+          ? envelope.data
+          : JSON.stringify(envelope.data);
+
+      const payload = {
+        // BigQuery table schema mappings (snake_case)
+        event_id: envelope.eventId,
+        timestamp: envelope.timestamp,
+        event_type: envelope.eventType,
+        severity: envelope.severity,
+        service: envelope.service,
+        environment: envelope.environment,
+        trace_id: envelope.traceId ?? null,
+        user_id: envelope.userId ?? null,
+        data: serializedData,
+
+        // Preserve original envelope keys (camelCase)
+        eventId: envelope.eventId,
+        eventType: envelope.eventType,
+        traceId: envelope.traceId,
+        userId: envelope.userId,
+      };
+
       const messageId = await this.topic.publishMessage({
-        json: envelope,
+        json: payload,
         attributes: {
           eventType: envelope.eventType,
           severity: envelope.severity,
