@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth/session";
 import { parseObjectId } from "@/lib/models/utils";
 import { getDb } from "@/lib/db/mongodb";
+import { trackAudit } from "@/lib/telemetry";
 
 interface RouteContext {
   params: Promise<{ id: string; commentId: string }>;
@@ -71,6 +72,21 @@ export async function DELETE(req: NextRequest, { params }: RouteContext) {
     await db.collection("articles").updateOne(
       { _id: articleObjectId },
       { $pull: { comments: { _id: commentObjectId } } as any }
+    );
+
+    const traceId = req.headers.get("x-trace-id") || undefined;
+    await trackAudit(
+      {
+        action: "delete",
+        resourceType: "comment",
+        resourceId: commentObjectId.toString(),
+        userId: session.userId,
+        status: "success",
+        details: {
+          articleId: id,
+        },
+      },
+      { traceId }
     );
 
     return NextResponse.json({
