@@ -46,9 +46,9 @@
 - [x] Task: Instrument User API endpoints with audit events [639c0fa]
   - [x] Emit `audit.auth` on registration (`/api/users`) and session validation (`/api/users/session`)
   - [x] Confirm tests pass (Green phase)
-- [ ] Task: Instrument Article API endpoints with audit events
-  - [ ] Emit `audit.article` on create (`POST /api/articles`), update (`PUT /api/articles/[id]`), and delete (`DELETE /api/articles/[id]`)
-  - [ ] Confirm tests pass (Green phase)
+- [x] Task: Instrument Article API endpoints with audit events [53956ed]
+  - [x] Emit `audit.article` on create (`POST /api/articles`), update (`PUT /api/articles/[id]`), and delete (`DELETE /api/articles/[id]`)
+  - [x] Confirm tests pass (Green phase)
 - [ ] Task: Instrument Comment API endpoints with audit events
   - [ ] Emit `audit.comment` on create (`POST /api/articles/[id]/comments`) and delete (`DELETE /api/articles/[id]/comments/[commentId]`)
   - [ ] Confirm tests pass (Green phase)
