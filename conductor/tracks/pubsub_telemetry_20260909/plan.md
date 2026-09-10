@@ -23,9 +23,9 @@
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md) [237fcf6]
 
 ## Phase 2: HTTP Tracing & Error Telemetry Integration (Morgan & Winston Replacement)
-- [ ] Task: TDD - Tests for Next.js 16 Proxy HTTP telemetry
-  - [ ] Write unit tests for `proxy.ts` verifying trace ID generation and `http.request` event emission
-  - [ ] Confirm tests fail (Red phase)
+- [x] Task: TDD - Tests for Next.js 16 Proxy HTTP telemetry [a72c305]
+  - [x] Write unit tests for `proxy.ts` verifying trace ID generation and `http.request` event emission
+  - [x] Confirm tests fail (Red phase)
 - [ ] Task: Implement Next.js 16 Proxy telemetry interceptor
   - [ ] Implement `src/proxy.ts` attaching `x-trace-id` header and measuring latency
   - [ ] Asynchronously dispatch `http.request` telemetry on responses
