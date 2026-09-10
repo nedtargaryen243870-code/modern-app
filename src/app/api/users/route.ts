@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { UserSignupSchema } from "@/lib/models/schema";
 import { getUserByEmail, hashPassword } from "@/lib/models/utils";
 import { getDb } from "@/lib/db/mongodb";
+import { trackAudit } from "@/lib/telemetry";
 
 export async function POST(req: NextRequest) {
   try {
@@ -46,6 +47,21 @@ export async function POST(req: NextRequest) {
     };
 
     const result = await db.collection("users").insertOne(newUser);
+    const traceId = req.headers.get("x-trace-id") || undefined;
+
+    await trackAudit(
+      {
+        action: "signup",
+        resourceType: "auth",
+        status: "success",
+        userId: result.insertedId.toString(),
+        details: {
+          email: email.toLowerCase(),
+          username,
+        },
+      },
+      { traceId }
+    );
 
     const response = NextResponse.json(
       {
