@@ -12,10 +12,10 @@
   - [x] Implement `src/lib/telemetry/schema.ts` with CloudEvents-style envelope and event types
   - [x] Implement `src/lib/telemetry/config.ts` reading environment variables with safe defaults
   - [x] Confirm tests pass (Green phase)
-- [ ] Task: TDD - Unit tests for Pub/Sub publisher and fallback logging
-  - [ ] Write unit tests for `src/lib/telemetry/publisher.ts` mocking `@google-cloud/pubsub`
-  - [ ] Test batching, error recovery, and stdout fallback when credentials are absent
-  - [ ] Confirm tests fail (Red phase)
+- [x] Task: TDD - Unit tests for Pub/Sub publisher and fallback logging [b4689d6]
+  - [x] Write unit tests for `src/lib/telemetry/publisher.ts` mocking `@google-cloud/pubsub`
+  - [x] Test batching, error recovery, and stdout fallback when credentials are absent
+  - [x] Confirm tests fail (Red phase)
 - [ ] Task: Implement Pub/Sub publisher client and local fallback
   - [ ] Implement singleton publisher in `src/lib/telemetry/publisher.ts` with batching configuration
   - [ ] Implement convenience facade `src/lib/telemetry/index.ts` (`logHttp`, `logError`, `trackAudit`)
