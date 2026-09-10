@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUserByEmail, getUserById, verifyPassword } from "@/lib/models/utils";
 import { getSessionUser } from "@/lib/auth/session";
+import { trackAudit } from "@/lib/telemetry";
 
 /**
  * POST /api/users/session - Authenticates user credentials and creates session cookie
  */
 export async function POST(req: NextRequest) {
   try {
+    const traceId = req.headers.get("x-trace-id") || undefined;
     const body = await req.json();
     const { email, password } = body;
 
@@ -19,6 +21,15 @@ export async function POST(req: NextRequest) {
 
     const user = await getUserByEmail(email);
     if (!user || !user.hashed_password) {
+      await trackAudit(
+        {
+          action: "login",
+          resourceType: "auth",
+          status: "failure",
+          details: { email },
+        },
+        { traceId }
+      );
       return NextResponse.json(
         { error: "Invalid email or password." },
         { status: 401 }
@@ -27,11 +38,31 @@ export async function POST(req: NextRequest) {
 
     const isValid = verifyPassword(password, user.hashed_password);
     if (!isValid) {
+      await trackAudit(
+        {
+          action: "login",
+          resourceType: "auth",
+          status: "failure",
+          details: { email },
+        },
+        { traceId }
+      );
       return NextResponse.json(
         { error: "Invalid email or password." },
         { status: 401 }
       );
     }
+
+    await trackAudit(
+      {
+        action: "login",
+        resourceType: "auth",
+        status: "success",
+        userId: user._id.toString(),
+        details: { email: user.email },
+      },
+      { traceId }
+    );
 
     const response = NextResponse.json({
       success: true,
