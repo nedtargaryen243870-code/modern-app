@@ -1,8 +1,8 @@
 # Implementation Plan: Google Cloud Pub/Sub Telemetry & Structured Logging
 
 ## Phase 1: Telemetry Core SDK & Publisher Service
-- [ ] Task: Document architecture update in tech stack
-  - [ ] Add `@google-cloud/pubsub` and BigQuery subscription details to `conductor/tech-stack.md`
+- [x] Task: Document architecture update in tech stack [11e023b]
+  - [x] Add `@google-cloud/pubsub` and BigQuery subscription details to `conductor/tech-stack.md`
 - [ ] Task: Install required dependencies
   - [ ] Install `@google-cloud/pubsub`, `uuid`, and `@types/uuid`
 - [ ] Task: TDD - Unit tests for telemetry schemas and envelope validation
