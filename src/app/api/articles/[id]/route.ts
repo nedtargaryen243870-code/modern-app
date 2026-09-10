@@ -3,6 +3,7 @@ import { getArticleById, parseObjectId, normalizeTags } from "@/lib/models/utils
 import { ArticleInputSchema } from "@/lib/models/schema";
 import { getSessionUser } from "@/lib/auth/session";
 import { getDb } from "@/lib/db/mongodb";
+import { trackAudit } from "@/lib/telemetry";
 
 export async function GET(
   _req: NextRequest,
@@ -101,6 +102,22 @@ export async function PUT(
     );
 
     const updated = await getArticleById(objectId);
+    const traceId = req.headers.get("x-trace-id") || undefined;
+
+    await trackAudit(
+      {
+        action: "update",
+        resourceType: "article",
+        resourceId: objectId.toString(),
+        userId: session.userId,
+        status: "success",
+        details: {
+          title,
+          tags: normalizeTags(tags),
+        },
+      },
+      { traceId }
+    );
 
     return NextResponse.json({
       success: true,
@@ -156,6 +173,18 @@ export async function DELETE(
 
     const db = await getDb();
     await db.collection("articles").deleteOne({ _id: objectId });
+    const traceId = req.headers.get("x-trace-id") || undefined;
+
+    await trackAudit(
+      {
+        action: "delete",
+        resourceType: "article",
+        resourceId: objectId.toString(),
+        userId: session.userId,
+        status: "success",
+      },
+      { traceId }
+    );
 
     return NextResponse.json({
       success: true,
