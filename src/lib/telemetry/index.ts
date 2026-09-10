@@ -63,17 +63,43 @@ export async function logError(
 }
 
 export async function trackAudit(
+  data: AuditPayload,
+  context?: { traceId?: string; userId?: string }
+): Promise<string | null>;
+export async function trackAudit(
   eventType: EventType,
   data: AuditPayload,
   context?: { traceId?: string; userId?: string }
+): Promise<string | null>;
+export async function trackAudit(
+  eventTypeOrData: EventType | AuditPayload,
+  dataOrContext?: AuditPayload | { traceId?: string; userId?: string },
+  maybeContext?: { traceId?: string; userId?: string }
 ): Promise<string | null> {
+  let eventType: EventType;
+  let data: AuditPayload;
+  let context: { traceId?: string; userId?: string } | undefined;
+
+  if (typeof eventTypeOrData === 'string') {
+    eventType = eventTypeOrData;
+    data = dataOrContext as AuditPayload;
+    context = maybeContext;
+  } else {
+    data = eventTypeOrData;
+    context = dataOrContext as { traceId?: string; userId?: string } | undefined;
+    const resType = data.resourceType;
+    eventType = (resType ? `audit.${resType}` : 'audit.auth') as EventType;
+  }
+
   const traceId = context?.traceId || `trace-${Date.now()}`;
+  const userId = context?.userId || data.userId;
+  const severity: EventSeverity = data.status === 'failure' ? 'WARN' : 'INFO';
 
   const envelope = createTelemetryEnvelope<AuditPayload>({
     eventType,
-    severity: 'INFO',
+    severity,
     traceId,
-    userId: context?.userId,
+    userId,
     data,
   });
 

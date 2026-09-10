@@ -18,20 +18,9 @@ export async function register() {
 }
 
 export const onRequestError: Instrumentation.onRequestError = async (
-  err: unknown,
-  request: {
-    path: string;
-    method: string;
-    headers: Record<string, string | string[] | undefined>;
-  },
-  context: {
-    routerKind: 'Pages Router' | 'App Router';
-    routePath: string;
-    routeType: 'render' | 'route' | 'action' | 'middleware';
-    renderSource?: 'react-server-components' | 'react-server-components-payload' | 'server-side-rendering';
-    revalidateReason?: 'on-demand' | 'stale' | 'expr' | string;
-    renderType?: 'dynamic' | 'dynamic-resume';
-  }
+  err,
+  request,
+  context
 ) => {
   const message =
     err instanceof Error
@@ -58,9 +47,14 @@ export const onRequestError: Instrumentation.onRequestError = async (
       stack,
       name,
       digest,
+      path: request?.path,
       routerKind: context?.routerKind,
       routeType: context?.routeType,
-      path: request?.path,
+      context: {
+        routerKind: context?.routerKind,
+        routePath: context?.routePath,
+        routeType: context?.routeType,
+      },
     },
     { traceId }
   );
