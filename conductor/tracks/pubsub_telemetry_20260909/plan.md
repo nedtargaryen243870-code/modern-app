@@ -49,9 +49,9 @@
 - [x] Task: Instrument Article API endpoints with audit events [53956ed]
   - [x] Emit `audit.article` on create (`POST /api/articles`), update (`PUT /api/articles/[id]`), and delete (`DELETE /api/articles/[id]`)
   - [x] Confirm tests pass (Green phase)
-- [ ] Task: Instrument Comment API endpoints with audit events
-  - [ ] Emit `audit.comment` on create (`POST /api/articles/[id]/comments`) and delete (`DELETE /api/articles/[id]/comments/[commentId]`)
-  - [ ] Confirm tests pass (Green phase)
+- [x] Task: Instrument Comment API endpoints with audit events [cbd2b83]
+  - [x] Emit `audit.comment` on create (`POST /api/articles/[id]/comments`) and delete (`DELETE /api/articles/[id]/comments/[commentId]`)
+  - [x] Confirm tests pass (Green phase)
 - [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
 
 ## Phase 4: BigQuery Schema, Documentation & End-to-End Verification
