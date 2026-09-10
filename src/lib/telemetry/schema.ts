@@ -29,6 +29,9 @@ export const ServerErrorPayloadSchema = z.object({
   name: z.string(),
   stack: z.string().optional(),
   digest: z.string().optional(),
+  path: z.string().optional(),
+  routerKind: z.string().optional(),
+  routeType: z.string().optional(),
   context: z
     .object({
       routerKind: z.string().optional(),
@@ -41,7 +44,11 @@ export type ServerErrorPayload = z.infer<typeof ServerErrorPayloadSchema>;
 
 export const AuditPayloadSchema = z.object({
   action: z.string(),
+  resourceType: z.string().optional(),
+  resourceId: z.string().optional(),
   targetId: z.string().optional(),
+  status: z.string().optional(),
+  userId: z.string().optional(),
   details: z.record(z.string(), z.unknown()).optional(),
 });
 export type AuditPayload = z.infer<typeof AuditPayloadSchema>;
