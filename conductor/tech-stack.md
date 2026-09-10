@@ -37,8 +37,16 @@
 
 ## Telemetry, Logging & Observability
 - **Event Pipeline:** Google Cloud Pub/Sub (`@google-cloud/pubsub`) replacing legacy Winston & Morgan
-- **Sink / Warehouse:** Google Cloud BigQuery (via Pub/Sub direct BigQuery subscription)
-- **Tracing & Correlation:** Request-bound correlation trace IDs (`x-trace-id`) via Next.js 16 Proxy
-- **Error Capture:** Next.js 16 Instrumentation hooks (`onRequestError`)
-- **Fallback / Local Mode:** Structured JSON stdout logger for offline/local development without GCP credentials
+- **Sink / Warehouse:** Google Cloud BigQuery (via Pub/Sub direct BigQuery subscription to `telemetry.app_events`)
+- **Tracing & Correlation:** Request-bound correlation trace IDs (`x-trace-id`) via Next.js 16 Proxy (`src/proxy.ts`)
+- **Error Capture:** Next.js 16 Instrumentation hooks (`onRequestError` in `src/instrumentation.ts`)
+- **Audit Logging:** Structured domain audit events for auth, articles, and comments (`trackAudit`)
+- **Fallback / Local Mode:** Zero-dependency structured JSON stdout logger for offline/local development without GCP credentials
+- **Event Types:**
+  - `http.request`: Method, path, statusCode, durationMs, userAgent, ip, referer
+  - `server.error`: Uncaught exceptions, stack traces, digest, routePath, routerKind
+  - `audit.auth`: User signup and login success/failure attempts
+  - `audit.article`: Article creation, updates, and deletions
+  - `audit.comment`: Comment submissions and deletions
+- **Documentation & Setup:** Detailed BigQuery DDL schema, Pub/Sub subscription commands, and analytical queries are documented in [`docs/telemetry/bigquery-pubsub-setup.md`](file:///home/tianzi/ned/ExpressModernization2/modern-app/docs/telemetry/bigquery-pubsub-setup.md).
 
