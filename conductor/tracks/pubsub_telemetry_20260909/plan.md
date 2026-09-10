@@ -22,7 +22,7 @@
   - [x] Confirm tests pass (Green phase)
 - [x] Task: Phase Verification & Checkpoint (Refer to workflow.md) [237fcf6]
 
-## Phase 2: HTTP Tracing & Error Telemetry Integration (Morgan & Winston Replacement)
+## Phase 2: HTTP Tracing & Error Telemetry Integration (Morgan & Winston Replacement) [checkpoint: 92ac0f8]
 - [x] Task: TDD - Tests for Next.js 16 Proxy HTTP telemetry [a72c305]
   - [x] Write unit tests for `proxy.ts` verifying trace ID generation and `http.request` event emission
   - [x] Confirm tests fail (Red phase)
@@ -37,7 +37,7 @@
   - [x] Implement `src/instrumentation.ts` with `register()` and `onRequestError()` hooks
   - [x] Forward uncaught server errors and digests to `logError`
   - [x] Confirm tests pass (Green phase)
-- [ ] Task: Phase Verification & Checkpoint (Refer to workflow.md)
+- [x] Task: Phase Verification & Checkpoint (Refer to workflow.md) [92ac0f8]
 
 ## Phase 3: Domain Audit Event Instrumentation
 - [ ] Task: TDD - Tests for domain audit logging across API routes
