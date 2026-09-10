@@ -43,9 +43,9 @@
 - [x] Task: TDD - Tests for domain audit logging across API routes [45509b0]
   - [x] Write tests verifying audit event emission on user registration, article lifecycle, and comments
   - [x] Confirm tests fail (Red phase)
-- [ ] Task: Instrument User API endpoints with audit events
-  - [ ] Emit `audit.auth` on registration (`/api/users`) and session validation (`/api/users/session`)
-  - [ ] Confirm tests pass (Green phase)
+- [x] Task: Instrument User API endpoints with audit events [639c0fa]
+  - [x] Emit `audit.auth` on registration (`/api/users`) and session validation (`/api/users/session`)
+  - [x] Confirm tests pass (Green phase)
 - [ ] Task: Instrument Article API endpoints with audit events
   - [ ] Emit `audit.article` on create (`POST /api/articles`), update (`PUT /api/articles/[id]`), and delete (`DELETE /api/articles/[id]`)
   - [ ] Confirm tests pass (Green phase)
