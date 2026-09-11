@@ -3,8 +3,6 @@ name: 'Google Antigravity Code Review'
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, ready_for_review]
-  pull_request_target:
-    types: [opened, synchronize, reopened, labeled, ready_for_review]
   issue_comment:
     types: [created]
 
@@ -21,14 +19,11 @@ jobs:
   code-review:
     name: 'Google Antigravity Code Review'
     timeout-minutes: 15
-    # Run review for PRs from trusted authors or labeled safe-to-test, or via /review comment by trusted authors.
-    # Internal PRs run via pull_request, while fork PRs run via pull_request_target.
+    # Run review solely on pull_request for internal PRs from trusted authors (or labeled safe-to-test), or via /review comment by trusted authors.
     if: |
       (
-        (
-          (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) ||
-          (github.event_name == 'pull_request_target' && github.event.pull_request.head.repo.full_name != github.repository)
-        ) &&
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
         github.event.pull_request.draft == false &&
         (
           contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
@@ -47,7 +42,6 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          allow-unsafe-pr-checkout: true
 
       - name: Authenticate to Google Cloud (OIDC)
         uses: google-github-actions/auth@v3
@@ -62,7 +56,7 @@ jobs:
           gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
           gcp-location: ${{ vars.GCP_LOCATION || 'global' }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          model: ${{ vars.GEMINI_MODEL || 'gemini-2.5-flash' }}
+          model: ${{ vars.GEMINI_MODEL || 'gemini-3.8-flash' }}
           fail-on-error: true
           custom-prompt: |
             Please analyze the following pull request with extreme care. Focus on:
