@@ -57,7 +57,7 @@ jobs:
           service_account: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}
 
       - name: Run Antigravity Review Agent
-        uses: anguillanneuf/run-antigravity-cli@main
+        uses: anguillanneuf/run-antigravity-cli@master
         with:
           gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
           gcp-location: ${{ vars.GCP_LOCATION || 'global' }}
