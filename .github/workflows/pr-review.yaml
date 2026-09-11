@@ -28,10 +28,7 @@ jobs:
         (
           contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
           (github.event.action != 'labeled' || github.event.label.name == 'safe-to-test') &&
-          (
-            contains(github.event.pull_request.labels.*.name, 'safe-to-test')
-            contains(github.event.pull_request.labels.*.name, 'safe-to-test')
-          )
+          contains(github.event.pull_request.labels.*.name, 'safe-to-test')
         )
       ) ||
       (
