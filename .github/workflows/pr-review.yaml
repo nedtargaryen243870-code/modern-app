@@ -1,0 +1,68 @@
+name: 'Google Antigravity Code Review'
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled, ready_for_review]
+  issue_comment:
+    types: [created]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.event.issue.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read       # Required for checking out code
+  pull-requests: write # Required for posting inline review comments
+  id-token: write      # Required for requesting JWT OIDC token from Google Cloud OIDC Workload Identity Federation
+
+jobs:
+  code-review:
+    name: 'Google Antigravity Code Review'
+    timeout-minutes: 15
+    # Run review solely on pull_request for internal PRs from trusted authors (or labeled safe-to-test), or via /review comment by trusted authors.
+    if: |
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.head.repo.full_name == github.repository &&
+        github.event.pull_request.draft == false &&
+        (
+          contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+          (github.event.action != 'labeled' || github.event.label.name == 'safe-to-test') &&
+          contains(github.event.pull_request.labels.*.name, 'safe-to-test')
+        )
+      ) ||
+      (
+        github.event_name == 'issue_comment' &&
+        github.event.issue.pull_request &&
+        (startsWith(github.event.comment.body, '/review ') || github.event.comment.body == '/review') &&
+        contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha || format('refs/pull/{0}/head', github.event.issue.number) }}
+          fetch-depth: 0
+
+      - name: Authenticate to Google Cloud (OIDC)
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Run Antigravity Review Agent
+        uses: anguillanneuf/run-antigravity-cli@master
+        with:
+          gcp-project-id: ${{ vars.GCP_PROJECT_ID }}
+          gcp-location: ${{ vars.GCP_LOCATION || 'global' }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          model: ${{ vars.GEMINI_MODEL || 'gemini-3.8-flash' }}
+          fail-on-error: true
+          custom-prompt: |
+            Please analyze the following pull request with extreme care. Focus on:
+            1. Security vulnerabilities (OWASP Top 10, credential leaks, unsafe imports).
+            2. Code quality, optimization, and potential bugs.
+            3. Do not suggest downgrading modern dependency or GitHub Action versions (e.g. actions/checkout@v7, google-github-actions/auth@v3).
+            4. Ensure suggestion blocks are strictly correct and actionable.
