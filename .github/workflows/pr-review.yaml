@@ -27,7 +27,11 @@ jobs:
         github.event.pull_request.draft == false &&
         (
           contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
-          contains(github.event.pull_request.labels.*.name, 'safe-to-test')
+          (github.event.action != 'labeled' || github.event.label.name == 'safe-to-test') &&
+          (
+            contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.pull_request.author_association) ||
+            contains(github.event.pull_request.labels.*.name, 'safe-to-test')
+          )
         )
       ) ||
       (
