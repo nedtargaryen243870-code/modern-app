@@ -4,10 +4,14 @@ import { logHttp } from '@/lib/telemetry';
 
 export async function proxy(request: NextRequest) {
   const startTime = Date.now();
-  const existingTraceId =
+  const rawTraceId =
     request.headers.get('x-trace-id') ||
     request.headers.get('x-cloud-trace-context')?.split('/')[0];
-  const traceId = existingTraceId || uuidv4();
+  // Sanitize incoming trace ID to alphanumeric, dash, slash, underscore (max 128 chars)
+  const traceId =
+    rawTraceId && /^[a-zA-Z0-9_\-/.]{1,128}$/.test(rawTraceId)
+      ? rawTraceId
+      : uuidv4();
 
   // Clone request headers and add x-trace-id
   const requestHeaders = new Headers(request.headers);

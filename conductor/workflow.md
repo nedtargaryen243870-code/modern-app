@@ -241,26 +241,34 @@ language, framework, and build tools.**
 ### Setup
 
 ```bash
-# Example: Commands to set up the development environment (e.g., install dependencies, configure database, init CodeMender)
-# e.g., for a Node.js project: npm install && cm init --verify
-# e.g., for a Go project: go mod tidy && cm init --verify
+# Install dependencies
+npm install
 ```
 
 ### Daily Development
 
 ```bash
-# Example: Commands for common daily tasks (e.g., start dev server, run tests, lint, security scans)
-# e.g., for a Node.js project: npm run dev, npm test, npm run lint, cm find ./src/ --compact
-# e.g., for a Go project: go run main.go, go test ./..., go fmt ./..., cm find ./... --compact
+# Start Next.js development server
+npm run dev
+
+# Run unit tests (telemetry and API route contracts)
+npm run test:unit
+
+# Run full parity and verification test suite
+npm run test:parity
+
+# Run complete test suite
+npm run test
+
+# Run ESLint
+npm run lint
 ```
 
 ### Before Committing
 
 ```bash
-# Example: Commands to run all pre-commit checks (e.g., format, lint, type check, run tests, security scan)
-# e.g., for a Node.js project: npm run check && cm find . -y
-# e.g., for a Go project: make check && cm find . -y
-# Check for any active findings: cm report --status OPEN
+# Run linting and full test suite
+npm run lint && npm run test
 ```
 
 ## Testing Requirements

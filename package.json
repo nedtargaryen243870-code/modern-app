@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:unit": "vitest run tests/telemetry tests/api",
+    "test:parity": "vitest run tests/verification"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -55,11 +55,19 @@ docker run -d --name mongodb -p 27017:27017 --restart unless-stopped mongo:7
 Create or verify `.env.local` in the project root:
 
 ```env
+# Database & Authentication
 MONGODB_URI=mongodb://localhost:27017/noobjs_dev
 PORT=3001
 NEXTAUTH_URL=http://localhost:3001
 AUTH_SECRET=modernization-secret-token-development-key-32chars
 NEXTAUTH_SECRET=modernization-secret-token-development-key-32chars
+
+# Telemetry & Cloud Observability (Optional for local development; defaults to stdout)
+PUBSUB_PROJECT_ID=
+PUBSUB_TOPIC_NAME=
+TELEMETRY_LOG_TO_CONSOLE=true
+TELEMETRY_SERVICE_NAME=modern-app
+TELEMETRY_ENVIRONMENT=development
 ```
 
 ---
@@ -90,16 +98,48 @@ npm run start
 
 ---
 
-### 6. Running Tests
+### 6. Running Tests & Quality Checks
 
-Run the test suite using Vitest:
+Run the automated test suites using Vitest:
 
 ```bash
-# Run all unit and integration tests
+# Run all unit, API contract, and parity tests
 npm test
+
+# Run isolated unit tests (telemetry SDK, publisher, and API contracts)
+npm run test:unit
+
+# Run legacy parity and adversarial verification test harness
+npm run test:parity
 
 # Run a specific test file
 npx vitest run tests/api/articles.test.ts
+
+# Run ESLint static analysis
+npm run lint
+```
+
+---
+
+## Project Structure
+
+```text
+modern-app/
+├── src/
+│   ├── app/                 # Next.js 16 App Router (pages and API route handlers)
+│   ├── components/          # Reusable React 19 UI components
+│   ├── lib/
+│   │   ├── db/              # MongoDB client and connection lifecycle
+│   │   ├── models/          # Native MongoDB collections and Zod schemas
+│   │   └── telemetry/       # Telemetry SDK, Zod envelope schema, Pub/Sub publisher
+│   ├── instrumentation.ts   # Next.js 16 server error capture (onRequestError)
+│   └── proxy.ts             # Next.js 16 request/response interceptor and trace propagation
+├── tests/
+│   ├── api/                 # API contract integration tests
+│   ├── telemetry/           # Telemetry schemas, publisher, and instrumentation unit tests
+│   └── verification/        # Legacy Express/Mongoose parity & adversarial test harness
+├── conductor/               # Architecture specs, guidelines, workflow, and tracks
+└── docs/                    # Cloud infrastructure guides (BigQuery Pub/Sub direct ingestion)
 ```
 
 ---
@@ -117,7 +157,13 @@ npx vitest run tests/api/articles.test.ts
 
 ## Telemetry & Cloud Observability
 
-The modern application integrates a serverless event streaming pipeline utilizing Google Cloud Pub/Sub and Google Cloud BigQuery, replacing the legacy Morgan and Winston file-based loggers.
+The modern application integrates an enterprise event streaming pipeline utilizing Google Cloud Pub/Sub with direct BigQuery subscription ingestion, replacing the legacy Morgan and Winston file-based loggers.
+
+### Core Telemetry Pillars
+- **Distributed HTTP Tracing (`src/proxy.ts`):** Next.js 16 Proxy intercepts incoming requests, propagates/sanitizes correlation IDs (`x-trace-id`), and asynchronously emits `http.request` latency metrics without blocking downstream route handlers.
+- **Server Error Capture (`src/instrumentation.ts`):** Next.js 16 `onRequestError` instrumentation catches unhandled runtime exceptions, server component crashes, and Next.js error digests, forwarding them to `logError`.
+- **Domain Audit Trails (`src/lib/telemetry`):** High-value mutations (user registration, login success/failure, article CRUD, and comment author/owner moderation) stream structured audit events (`audit.auth`, `audit.article`, `audit.comment`) with sensitive passwords and auth tokens strictly redacted.
+- **Fail-Safe Local Fallback:** When Google Cloud credentials or topic configurations are absent, the SDK defaults to zero-dependency structured JSON stdout logging.
 
 ### Environment Variables for Telemetry
 
@@ -127,6 +173,10 @@ Configure the following variables in `.env.local` or your production deployment 
 # Google Cloud Pub/Sub Configuration
 PUBSUB_PROJECT_ID="your-gcp-project-id"
 PUBSUB_TOPIC_NAME="telemetry-events"
+
+# Optional: Service and environment tagging (defaults to "modern-app" and NODE_ENV)
+TELEMETRY_SERVICE_NAME="modern-app"
+TELEMETRY_ENVIRONMENT="production"
 
 # Optional: Enable stdout fallback logging in addition to Pub/Sub
 TELEMETRY_LOG_TO_CONSOLE="false"

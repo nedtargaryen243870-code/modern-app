@@ -192,17 +192,17 @@ SELECT
   JSON_VALUE(data.path) AS endpoint,
   JSON_VALUE(data.method) AS method,
   COUNT(1) AS total_requests,
-  ROUND(AVG(CAST(JSON_VALUE(data.durationMs) AS FLOAT64)), 2) AS avg_duration_ms,
-  PERCENTILE_CONT(CAST(JSON_VALUE(data.durationMs) AS FLOAT64), 0.5) OVER(PARTITION BY JSON_VALUE(data.path)) AS p50_ms,
-  PERCENTILE_CONT(CAST(JSON_VALUE(data.durationMs) AS FLOAT64), 0.95) OVER(PARTITION BY JSON_VALUE(data.path)) AS p95_ms,
-  PERCENTILE_CONT(CAST(JSON_VALUE(data.durationMs) AS FLOAT64), 0.99) OVER(PARTITION BY JSON_VALUE(data.path)) AS p99_ms
+  ROUND(AVG(LAX_FLOAT64(data.durationMs)), 2) AS avg_duration_ms, 
+  ROUND(APPROX_QUANTILES(LAX_FLOAT64(data.durationMs), 100)[SAFE_OFFSET(50)], 2) AS p50_ms,
+  ROUND(APPROX_QUANTILES(LAX_FLOAT64(data.durationMs), 100)[SAFE_OFFSET(95)], 2) AS p95_ms,
+  ROUND(APPROX_QUANTILES(LAX_FLOAT64(data.durationMs), 100)[SAFE_OFFSET(99)], 2) AS p99_ms
 FROM
   `YOUR_PROJECT_ID.telemetry.app_events`
 WHERE
   event_type = 'http.request'
   AND timestamp >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 24 HOUR)
 GROUP BY
-  endpoint, method, data.durationMs, data.path
+  endpoint, method
 ORDER BY
   total_requests DESC;
 ```

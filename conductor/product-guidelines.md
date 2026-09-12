@@ -28,3 +28,9 @@
 - Semantic HTML tags (`<article>`, `<nav>`, `<main>`, `<header>`, `<footer>`).
 - Full keyboard navigability for interactive elements (modals, dropdowns, forms).
 - Proper ARIA attributes and focus indicators on interactive elements.
+
+## 5. Observability, Telemetry & Privacy Standards
+- **Data Privacy & Redaction:** Never emit plaintext passwords, password hashes, session secrets, authorization bearer tokens, or raw cookies into telemetry streams or Pub/Sub topics.
+- **Fail-Safe & Non-Blocking:** Telemetry publishing must operate asynchronously and fail-safe. Network outages or Google Cloud API failures must never degrade end-user response times or trigger 500 errors.
+- **Distributed Trace Correlation:** Propagate `x-trace-id` across Next.js 16 Proxy, route handlers, error reporters, and external systems to maintain unified request traceability.
+- **Environment Isolation:** Local and test runs default to structured stdout logging without requiring Google Cloud credentials or live Pub/Sub topics.
