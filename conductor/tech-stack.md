@@ -25,6 +25,10 @@
 
 ## Testing & Quality Assurance
 - **Test Runner:** Vitest 5 (`vitest`)
+- **Dedicated Test Suites:**
+  - `npm run test:unit`: Isolated unit tests for telemetry SDK, publisher, and API route handlers (`tests/telemetry`, `tests/api`)
+  - `npm run test:parity`: Legacy parity and adversarial behavioral verification (`tests/verification`)
+  - `npm run test`: Complete test suite execution
 - **Component Testing:** `@testing-library/react` and `jsdom`
 - **API & Mocking Utilities:** `node-mocks-http`
 - **Parity Verification Harness:** Dedicated integration and adversarial test suites in `tests/verification/`

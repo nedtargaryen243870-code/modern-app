@@ -34,8 +34,16 @@ The primary objective is achieving 100% behavioral and API contract parity with 
    - Route handlers replicating legacy Express endpoints (`/api/articles`, `/api/tags`, `/api/users`).
    - Parity and adversarial test suites (`tests/verification/parity-adversarial.test.ts`) guaranteeing zero regressions against legacy business rules and data models.
 
+6. **Telemetry, Observability & Cloud Auditing**
+   - High-throughput asynchronous event publishing via Google Cloud Pub/Sub with BigQuery direct ingestion.
+   - Distributed HTTP request tracing and latency monitoring via Next.js 16 Proxy (`x-trace-id`).
+   - Server exception capture and digestion via Next.js 16 Instrumentation hooks (`onRequestError`).
+   - Domain audit event streaming for security and compliance (user authentication, article mutations, comment moderation).
+   - Zero-dependency structured JSON console fallback for local development and test environments.
+
 ## Success Metrics & Quality Goals
 - **Parity Fidelity:** 100% compatibility with verified legacy API contracts and business logic rules.
 - **Reliability:** Zero regressions across core user journeys (Auth, Articles, Comments, Tags).
 - **Performance:** Sub-second page rendering and responsive interactions powered by Next.js Server Components.
+- **Observability:** Sub-millisecond non-blocking telemetry overhead with 100% fail-safe error isolation and zero dropped server requests.
 - **Maintainability:** Full TypeScript type safety across database queries, route handlers, and UI components.
