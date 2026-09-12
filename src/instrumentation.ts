@@ -41,21 +41,25 @@ export const onRequestError: Instrumentation.onRequestError = async (
     (Array.isArray(traceIdHeader) ? traceIdHeader[0] : traceIdHeader) ||
     `trace-${Date.now()}`;
 
-  await logError(
-    {
-      message,
-      stack,
-      name,
-      digest,
-      path: request?.path,
-      routerKind: context?.routerKind,
-      routeType: context?.routeType,
-      context: {
+  try {
+    await logError(
+      {
+        message,
+        stack,
+        name,
+        digest,
+        path: request?.path,
         routerKind: context?.routerKind,
-        routePath: context?.routePath,
         routeType: context?.routeType,
+        context: {
+          routerKind: context?.routerKind,
+          routePath: context?.routePath,
+          routeType: context?.routeType,
+        },
       },
-    },
-    { traceId }
-  );
+      { traceId }
+    );
+  } catch (logErr) {
+    console.error('[Telemetry] Failed to record error in instrumentation:', logErr);
+  }
 };

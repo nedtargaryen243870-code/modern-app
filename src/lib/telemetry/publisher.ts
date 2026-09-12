@@ -32,28 +32,31 @@ export class TelemetryPublisher {
   async publish<T = Record<string, unknown>>(
     envelope: TelemetryEnvelope<T>
   ): Promise<string | null> {
-    // Console fallback logging if enabled
-    if (this.config.logToConsole) {
-      const logFn =
-        envelope.severity === 'ERROR' || envelope.severity === 'CRITICAL'
-          ? console.error
-          : console.log;
-      logFn(`[Telemetry] [${envelope.severity}] [${envelope.eventType}]`, JSON.stringify(envelope));
-    }
-
-    // If PubSub is not configured, return local-fallback
-    if (!this.topic) {
-      return 'local-fallback';
-    }
-
     try {
+      // Console fallback logging if enabled
+      if (this.config.logToConsole) {
+        const logFn =
+          envelope.severity === 'ERROR' || envelope.severity === 'CRITICAL'
+            ? console.error
+            : console.log;
+        logFn(
+          `[Telemetry] [${envelope.severity}] [${envelope.eventType}]`,
+          JSON.stringify(envelope)
+        );
+      }
+
+      // If PubSub is not configured, return local-fallback
+      if (!this.topic) {
+        return 'local-fallback';
+      }
+
       // BigQuery direct subscriptions with JSON columns require the payload
       // for the JSON field to be a valid JSON-encoded string, and table columns
       // use snake_case identifiers.
       const serializedData =
         typeof envelope.data === 'string'
           ? envelope.data
-          : JSON.stringify(envelope.data);
+          : JSON.stringify(envelope.data ?? {});
 
       const payload = {
         // BigQuery table schema mappings (snake_case)
