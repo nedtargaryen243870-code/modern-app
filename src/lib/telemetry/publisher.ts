@@ -25,11 +25,11 @@ export class TelemetryPublisher {
     }
   }
 
-  public isConfigured(): boolean {
+  isConfigured(): boolean {
     return Boolean(this.topic);
   }
 
-  public async publish<T = Record<string, unknown>>(
+  async publish<T = Record<string, unknown>>(
     envelope: TelemetryEnvelope<T>
   ): Promise<string | null> {
     // Console fallback logging if enabled
@@ -91,7 +91,7 @@ export class TelemetryPublisher {
     }
   }
 
-  public async flush(): Promise<void> {
+  async flush(): Promise<void> {
     if (this.topic && typeof this.topic.flush === 'function') {
       try {
         await this.topic.flush();
@@ -101,7 +101,7 @@ export class TelemetryPublisher {
     }
   }
 
-  public async close(): Promise<void> {
+  async close(): Promise<void> {
     await this.flush();
     if (this.pubsubClient && typeof this.pubsubClient.close === 'function') {
       try {
