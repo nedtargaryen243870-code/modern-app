@@ -38,11 +38,7 @@ jobs:
         github.event.pull_request.head.repo &&
         github.event.pull_request.head.repo.full_name != github.repository &&
         github.event.pull_request.draft == false &&
-        (
-          (github.event.action == 'labeled' &&
-        github.event.label.name == 'safe-to-test') ||
-          (github.event.action == 'ready_for_review' && contains(github.event.pull_request.labels.*.name, 'safe-to-test'))
-        )
+        (github.event.action == 'labeled' && github.event.label.name == 'safe-to-test')
       ) ||
       (
         github.event_name == 'issue_comment' &&
