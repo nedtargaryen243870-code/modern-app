@@ -3,6 +3,8 @@ name: 'Google Antigravity Code Review'
 on:
   pull_request:
     types: [opened, synchronize, reopened, labeled, ready_for_review]
+  pull_request_target:
+    types: [labeled]
   issue_comment:
     types: [created]
 
@@ -19,7 +21,7 @@ jobs:
   code-review:
     name: 'Google Antigravity Code Review'
     timeout-minutes: 15
-    # Run review solely on pull_request for internal PRs from trusted authors (or labeled safe-to-test), or via /review comment by trusted authors.
+    # Run review for internal PRs from trusted authors (or labeled safe-to-test), fork PRs when labeled safe-to-test by trusted maintainers, or via /review comment by trusted authors.
     if: |
       (
         github.event_name == 'pull_request' &&
@@ -30,6 +32,13 @@ jobs:
           (github.event.action != 'labeled' || github.event.label.name == 'safe-to-test') &&
           contains(github.event.pull_request.labels.*.name, 'safe-to-test')
         )
+      ) ||
+      (
+        github.event_name == 'pull_request_target' &&
+        github.event.pull_request.head.repo &&
+        github.event.pull_request.head.repo.full_name != github.repository &&
+        github.event.pull_request.draft == false &&
+        (github.event.action == 'labeled' && github.event.label.name == 'safe-to-test' && contains(fromJSON('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.sender.author_association))
       ) ||
       (
         github.event_name == 'issue_comment' &&
@@ -44,6 +53,9 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha || format('refs/pull/{0}/head', github.event.issue.number) }}
           fetch-depth: 0
+          allow-unsafe-pr-checkout: true
+          persist-credentials: false
+
 
       - name: Authenticate to Google Cloud (OIDC)
         uses: google-github-actions/auth@v3
